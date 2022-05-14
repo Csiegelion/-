@@ -34,8 +34,8 @@ always @(posedge clk or negedge rst) begin
 		if (!rst) begin
 			ready <= 1'b0;
 		end
-		else if (data_out != data_in)begin
-			ready <= 1'b1 && ren;
+		else begin
+			ready <=  ren;
 		end
 	end
 always @(posedge clk or negedge rst) begin
