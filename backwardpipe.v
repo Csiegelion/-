@@ -29,8 +29,8 @@ module backwardpipe#(parameter L=8)(
 	input  [L-1:0] data_f,
 	
 	input  ready_b,
-	output valid_b,
-	output  [L-1:0] data_b
+	output reg valid_b,
+	output  reg [L-1:0] data_b
 	
 );
     wire store;
@@ -63,6 +63,22 @@ module backwardpipe#(parameter L=8)(
 			ready_f<=(~buffer_valid&&~store)||ready_b;
 			end
 		end
+		always @(negedge clk or negedge rst) begin
+		if (!rst)begin
+			data_b <= {L{1'b0}};
+			end
+			else begin
+			data_b <= ready_f ? data_f : data_buffer; 
+			end
+		end
+		always @(negedge clk or negedge rst) begin
+		if (!rst)begin
+			valid_b <= 1'b0;
+			end
+			else begin
+			valid_b <= ready_f ? valid_f : buffer_valid ;
+			end
+		end
 		/*always @(posedge clk or negedge rst) begin
 		if (!rst)begin
 			data_b <= {L{1'b0}};
@@ -71,6 +87,6 @@ module backwardpipe#(parameter L=8)(
 			data_b <= ready_f ? data_f : data_buffer; 
 			end
 		end*/
-	assign  valid_b = ready_f ? valid_f : buffer_valid;    
-    assign data_b = ready_f ? data_f : data_buffer;
+	//assign  valid_b = ready_f ? valid_f : buffer_valid;    
+   // assign data_b = ready_f ? data_f : data_buffer;
 endmodule
