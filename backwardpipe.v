@@ -54,12 +54,12 @@ module backwardskidbuffer#(parameter L=8)(
 			end
 	end
 	always @(*) begin
-		data_b <= buffer_valid ? data_buffer : data_pre; 
-		valid_b <=  pre_valid || buffer_valid ;
-		ready_f <= ! buffer_valid;
+		data_b = buffer_valid ? data_buffer : data_pre; 
+		valid_b =  pre_valid || buffer_valid ;
+		ready_f = ! buffer_valid;
 		end
 	
-	//assign store =~ready_b && ready_f && valid_f&& valid_b;//ÓÐ´«ÈëµÄÊý¾Ý£¬ÏÂÓÎÃ»×¼±¸ºÃ
+	//assign store =~ready_b && ready_f && valid_f&& valid_b;//æœ‰ä¼ å…¥çš„æ•°æ®ï¼Œä¸‹æ¸¸æ²¡å‡†å¤‡å¥½
 	/*always @(posedge clk or negedge rst) begin
 	//tim=0;
 		if (!rst)begin
