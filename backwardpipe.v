@@ -53,11 +53,25 @@ module backwardskidbuffer#(parameter L=8)(
 			buffer_valid<= 1'b0;
 			end
 	end
-	always @(*) begin
-		data_b = buffer_valid ? data_buffer : data_pre; 
-		valid_b =  pre_valid || buffer_valid ;
-		ready_f = ! buffer_valid;
+	always @(posedge clk or negedge rst) begin
+	tim=0;
+	#1 tim=1;
+	end
+	always @(posedge tim) begin
+	    
+			
+			if(!buffer_valid)begin
+			data_b<=data_pre;
+			end
+            else begin
+            data_b<=data_buffer;
 		end
+		end
+	always @(*) begin
+	    ready_f = ! buffer_valid ;
+	   valid_b =  pre_valid || buffer_valid ;
+		
+end
 	
 	//assign store =~ready_b && ready_f && valid_f&& valid_b;//有传入的数据，下游没准备好
 	/*always @(posedge clk or negedge rst) begin
