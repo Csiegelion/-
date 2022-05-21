@@ -49,24 +49,25 @@ always @(posedge clk) begin
        end
    else if(state) begin          
             if (ready) begin
-             buffer_valid<=valid_f;
-			data_buffer<=data_f;  
-               ready_buffer <= 1'b1    ;               
+		ready_buffer <= 1'b1;  
+                buffer_valid<=valid_f;
+		data_buffer<=data_f;  
+                             
             end
             else begin
-              pre_valid<=valid_f;
-			data_pre<=data_f;
-               ready_buffer <= 1'b0    ;
-               state<= !state ;
+		ready_buffer <= 1'b0;
+                pre_valid<=valid_f;
+		data_pre<=data_f;
+                state<= !state ;
             end
 
          end
               
          else   if (ready) begin
-             buffer_valid<=pre_valid;
-			data_buffer<=data_pre;              
-               ready_buffer <= 1'b1;
-               state <= !state;               
+		ready_buffer <= 1'b1;
+                buffer_valid<=pre_valid;
+		data_buffer<=data_pre;              
+                state <= !state;               
             end
 
          end
@@ -81,7 +82,7 @@ assign ready   = ready_b || ! buffer_valid ;
 
 endmodule
 	
-	//assign store =~ready_b && ready_f && valid_f&& valid_b;//ÓÐ´«ÈëµÄÊý¾Ý£¬ÏÂÓÎÃ»×¼±¸ºÃ
+	//assign store =~ready_b && ready_f && valid_f&& valid_b;//æœ‰ä¼ å…¥çš„æ•°æ®ï¼Œä¸‹æ¸¸æ²¡å‡†å¤‡å¥½
 	/*always @(posedge clk or negedge rst) begin
 	//tim=0;
 		if (!rst)begin
