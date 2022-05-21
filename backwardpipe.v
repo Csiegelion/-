@@ -20,60 +20,68 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module backwardskidbuffer#(parameter L=8)(
-    input clk,
+module backwardskidbuffer#(parameter L=8,
+	parameter OPTREG = 0 )(
+
+   input clk,
 	input rst,
 	
-	output reg ready_f,
+	output  ready_f,
 	input valid_f,
 	input  [L-1:0] data_f,
 	
 	input  ready_b,
-	output  reg valid_b,
-	output  reg [L-1:0] data_b
-	
-);
-    wire store;
-   // reg tim;
-    reg pre_valid;
-	reg [L-1:0] data_pre;
-	reg buffer_valid;
-	reg [L-1:0] data_buffer;
-	always @(posedge clk or negedge rst) begin
-	       if(ready_f) begin
-			pre_valid<=valid_f;
-			data_pre<=data_f;
-			
-			if(!ready_b)begin
-			buffer_valid<=pre_valid;
-			data_buffer<=data_pre;
-			end
-		end
-		 if(ready_b)begin
-			buffer_valid<= 1'b0;
-			end
-	end
-	always @(posedge clk or negedge rst) begin
-	tim=0;
-	#1 tim=1;
-	end
-	always @(posedge tim) begin
-	    
-			
-			if(!buffer_valid)begin
-			data_b<=data_pre;
-			end
+	output   valid_b,
+	output   [L-1:0] data_b       
+) ;
+reg state;
+wire ready  ;          
+reg pre_valid;
+reg [L-1:0] data_pre;
+reg buffer_valid;
+reg [L-1:0] data_buffer;       
+reg  ready_buffer;        
+      
+
+always @(posedge clk) begin 
+   if (!rst) begin
+      state <= 0 ;
+       end
+   else if(state) begin          
+            if (ready) begin
+             buffer_valid<=valid_f;
+			data_buffer<=data_f;  
+               ready_buffer <= 1'b1    ;               
+            end
             else begin
-            data_b<=data_buffer;
-		end
-		end
-	always @(*) begin
-	    ready_f = ! buffer_valid ;
-	   valid_b =  pre_valid || buffer_valid ;
-		
-end
+              pre_valid<=valid_f;
+			data_pre<=data_f;
+               ready_buffer <= 1'b0    ;
+               state<= !state ;
+            end
+
+         end
+              
+         else   if (ready) begin
+             buffer_valid<=pre_valid;
+			data_buffer<=data_pre;              
+               ready_buffer <= 1'b1;
+               state <= !state;               
+            end
+
+         end
+
+   
+
+assign ready_f  = ready_buffer ;
+assign data_b  = data_buffer;
+assign valid_b  = buffer_valid;   
+assign ready   = ready_b || ! buffer_valid ;
+        
+
+endmodule
 	
-	//assign store =~ready_b && ready_f && valid_f&& valid_b;//æœ‰ä¼ å…¥çš„æ•°æ®ï¼Œä¸‹æ¸¸æ²¡å‡†å¤‡å¥½
+	//assign store =~ready_b && ready_f && valid_f&& valid_b;//ÓĞ´«ÈëµÄÊı¾İ£¬ÏÂÓÎÃ»×¼±¸ºÃ
 	/*always @(posedge clk or negedge rst) begin
 	//tim=0;
 		if (!rst)begin
@@ -88,7 +96,7 @@ end
 			buffer_valid<=1'b0;
 			end
 		end
-	/*always @(posedge clk or negedge rst) begin
+	always @(posedge clk or negedge rst) begin
 	tim=0;
 	#3 tim=1;
 	end
@@ -136,4 +144,4 @@ end
 
     
 
-endmodule
+//endmodule
