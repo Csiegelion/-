@@ -47,7 +47,7 @@ always @(posedge clk) begin
    if (!rst) begin
       state <= 0 ;
        end
-   else if(state) begin          
+	else if(!state) begin          
             if (ready) begin
 		ready_buffer <= 1'b1;  
                 buffer_valid<=valid_f;
