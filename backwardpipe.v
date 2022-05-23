@@ -23,16 +23,16 @@
 module backwardskidbuffer#(parameter L=8,
 	parameter OPTREG = 0 )(
 
-   input clk,
+    input clk,
 	input rst,
 	
-	output  ready_f,
+	output reg ready_f,
 	input valid_f,
 	input  [L-1:0] data_f,
 	
 	input  ready_b,
-	output   valid_b,
-	output   [L-1:0] data_b       
+	output  reg valid_b,
+	output  reg [L-1:0] data_b       
 ) ;
 reg state;
 wire ready  ;          
@@ -47,42 +47,41 @@ always @(posedge clk) begin
    if (!rst) begin
       state <= 0 ;
        end
-	else if(!state) begin          
+   else if(!state) begin          
             if (ready) begin
-		ready_buffer <= 1'b1;  
-                buffer_valid<=valid_f;
-		data_buffer<=data_f;  
-                             
+             valid_b<=valid_f;
+			data_b<=data_f;  
+               ready_f <= 1'b1    ;               
             end
             else begin
-		ready_buffer <= 1'b0;
-                pre_valid<=valid_f;
-		data_pre<=data_f;
-                state<= !state ;
+              pre_valid<=valid_f;
+			data_pre<=data_f;
+               ready_f <= 1'b0    ;
+               state<= !state ;
             end
 
          end
               
          else   if (ready) begin
-		ready_buffer <= 1'b1;
-                buffer_valid<=pre_valid;
-		data_buffer<=data_pre;              
-                state <= !state;               
+             valid_b<=pre_valid;
+			data_b<=data_pre;              
+               ready_f <= 1'b1;
+               state <= !state;               
             end
 
          end
 
    
 
-assign ready_f  = ready_buffer ;
-assign data_b  = data_buffer;
-assign valid_b  = buffer_valid;   
-assign ready   = ready_b || ! buffer_valid ;
+//assign ready_f  = ready_buffer ;
+//assign data_b  = data_buffer;
+//assign valid_b  = buffer_valid;   
+assign ready   = ready_b || ! valid_b ;
         
 
 endmodule
 	
-	//assign store =~ready_b && ready_f && valid_f&& valid_b;//æœ‰ä¼ å…¥çš„æ•°æ®ï¼Œä¸‹æ¸¸æ²¡å‡†å¤‡å¥½
+	//assign store =~ready_b && ready_f && valid_f&& valid_b;//ÓĞ´«ÈëµÄÊı¾İ£¬ÏÂÓÎÃ»×¼±¸ºÃ
 	/*always @(posedge clk or negedge rst) begin
 	//tim=0;
 		if (!rst)begin
