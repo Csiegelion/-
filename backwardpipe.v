@@ -38,9 +38,9 @@ reg state;
 wire ready  ;          
 reg pre_valid;
 reg [L-1:0] data_pre;
-reg buffer_valid;
-reg [L-1:0] data_buffer;       
-reg  ready_buffer;        
+//reg buffer_valid;
+//reg [L-1:0] data_buffer;       
+//reg  ready_buffer;        
       
 
 always @(posedge clk) begin 
@@ -81,7 +81,7 @@ assign ready   = ready_b || ! valid_b ;
 
 endmodule
 	
-	//assign store =~ready_b && ready_f && valid_f&& valid_b;//ÓĞ´«ÈëµÄÊı¾İ£¬ÏÂÓÎÃ»×¼±¸ºÃ
+	//assign store =~ready_b && ready_f && valid_f&& valid_b;//æœ‰ä¼ å…¥çš„æ•°æ®ï¼Œä¸‹æ¸¸æ²¡å‡†å¤‡å¥½
 	/*always @(posedge clk or negedge rst) begin
 	//tim=0;
 		if (!rst)begin
